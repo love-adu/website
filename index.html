@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Adu — Media Law, Data Science & AI Policy</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08080f;
+    --surface: #0f0f1a;
+    --border: #22223a;
+    --violet: #a78bfa;
+    --violet-dim: #6d52c4;
+    --pink: #f472b6;
+    --text: #c8c4d8;
+    --text-dim: #5a5570;
+    --text-bright: #edeaf8;
+    --indigo: #818cf8;
+    --purple: #a855f7;
+    --blue: #6366f1;
+    --magenta: #c084fc;
+    --rose: #e879f9;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  .side-bar {
+    position: fixed;
+    left: 0; top: 0;
+    width: 4px; height: 100vh;
+    z-index: 100;
+    background: linear-gradient(to bottom,
+      #818cf8 0%, #818cf8 16.6%,
+      #a78bfa 16.6%, #a78bfa 33.3%,
+      #a855f7 33.3%, #a855f7 50%,
+      #c084fc 50%, #c084fc 66.6%,
+      #f472b6 66.6%, #f472b6 83.3%,
+      #e879f9 83.3%, #e879f9 100%
+    );
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    padding: 18px 40px 18px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,8,15,0.92);
+    backdrop-filter: blur(8px);
+  }
+
+  .nav-brand { font-size: 11px; letter-spacing: 0.15em; color: var(--text-bright); font-weight: 500; }
+  .nav-brand span { color: var(--text-dim); margin: 0 8px; }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 10px; letter-spacing: 0.12em; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--violet); }
+
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 40px 60px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-eyebrow { font-size: 10px; letter-spacing: 0.2em; color: var(--text-dim); margin-bottom: 24px; animation: fadeUp 0.8s ease both; }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 8vw, 110px);
+    font-weight: 700;
+    font-style: italic;
+    line-height: 1.0;
+    color: var(--text-bright);
+    margin-bottom: 28px;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+
+  .hero-sub { font-size: 13px; line-height: 1.8; color: var(--text); max-width: 640px; margin: 0 auto 40px; animation: fadeUp 0.8s 0.2s ease both; }
+
+  .hero-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 48px; animation: fadeUp 0.8s 0.3s ease both; }
+
+  .tag { padding: 6px 14px; border: 1px solid var(--border); font-size: 10px; letter-spacing: 0.1em; color: var(--text-dim); }
+  .tag.violet { border-color: var(--violet-dim); color: var(--violet); }
+  .tag.pink { border-color: #8a3060; color: var(--pink); }
+  .tag.purple { border-color: #5a2a80; color: var(--purple); }
+
+  .hero-links { display: flex; gap: 16px; justify-content: center; animation: fadeUp 0.8s 0.4s ease both; }
+
+  .btn { padding: 10px 24px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.15em; cursor: pointer; text-decoration: none; transition: all 0.2s; display: inline-block; }
+  .btn-primary { background: var(--violet); color: var(--bg); font-weight: 500; border: none; }
+  .btn-primary:hover { background: #c4b5fd; }
+  .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  .btn-outline:hover { border-color: var(--text); color: var(--text-bright); }
+
+  .hero-scroll { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); animation: fadeUp 0.8s 0.6s ease both; }
+
+  section { border-bottom: 1px solid var(--border); }
+
+  .section-inner { max-width: 1200px; margin: 0 auto; padding: 80px 40px 80px 60px; }
+
+  .section-label { font-size: 10px; letter-spacing: 0.2em; color: var(--text-dim); margin-bottom: 8px; }
+
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(32px, 4vw, 52px); font-weight: 700; font-style: italic; color: var(--text-bright); margin-bottom: 24px; line-height: 1.1; }
+
+  .section-intro { font-size: 13px; line-height: 1.8; color: var(--text); max-width: 700px; margin-bottom: 48px; border-bottom: 1px solid var(--border); padding-bottom: 48px; }
+  .section-intro .highlight { color: var(--pink); }
+
+  .roles-grid { display: grid; gap: 0; }
+
+  .role-item { padding: 28px 0; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 200px 1fr auto; gap: 40px; }
+  .role-item:last-child { border-bottom: none; }
+
+  .role-org { font-size: 11px; letter-spacing: 0.08em; color: var(--text-dim); padding-top: 2px; }
+  .role-title { font-size: 13px; color: var(--text-bright); font-weight: 500; margin-bottom: 4px; }
+  .role-desc { font-size: 12px; color: var(--text-dim); line-height: 1.7; max-width: 560px; }
+  .role-date { font-size: 10px; letter-spacing: 0.08em; color: var(--text-dim); white-space: nowrap; padding-top: 2px; }
+
+  .role-badge { display: inline-block; padding: 2px 8px; font-size: 9px; letter-spacing: 0.1em; margin-right: 6px; margin-top: 8px; }
+  .badge-current { background: rgba(167,139,250,0.12); color: var(--violet); border: 1px solid var(--violet-dim); }
+  .badge-policy { background: rgba(244,114,182,0.1); color: var(--pink); border: 1px solid #8a3060; }
+
+  .research-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); }
+
+  .research-card { background: var(--bg); padding: 28px; position: relative; transition: background 0.2s; }
+  .research-card:hover { background: var(--surface); }
+  .research-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; }
+
+  .rc-1::before { background: #818cf8; }
+  .rc-2::before { background: #a78bfa; }
+  .rc-3::before { background: #a855f7; }
+  .rc-4::before { background: #c084fc; }
+  .rc-5::before { background: #f472b6; }
+  .rc-6::before { background: #e879f9; }
+
+  .research-venue { font-size: 9px; letter-spacing: 0.15em; color: var(--text-dim); margin-bottom: 10px; }
+  .research-title { font-size: 13px; color: var(--text-bright); line-height: 1.5; margin-bottom: 10px; }
+  .research-desc { font-size: 11px; color: var(--text-dim); line-height: 1.7; }
+
+  .bento { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); }
+  .bento-card { background: var(--bg); padding: 32px; transition: background 0.2s; }
+  .bento-card:hover { background: var(--surface); }
+  .bento-card.wide { grid-column: span 2; }
+
+  .bento-label { font-size: 9px; letter-spacing: 0.2em; color: var(--text-dim); margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+
+  .bento-stat-num { font-family: 'Playfair Display', serif; font-size: 52px; font-style: italic; color: var(--violet); line-height: 1; margin-bottom: 4px; }
+  .bento-stat-label { font-size: 11px; color: var(--text-dim); max-width: 160px; line-height: 1.5; }
+
+  .bento-text { font-size: 12px; line-height: 1.8; color: var(--text); }
+  .bento-text .highlight { color: var(--pink); }
+
+  .skills-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .skill-tag { padding: 4px 10px; font-size: 10px; border: 1px solid var(--border); color: var(--text-dim); letter-spacing: 0.06em; }
+
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+
+  .contact-info a { display: block; color: var(--text-dim); text-decoration: none; font-size: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); transition: color 0.2s; letter-spacing: 0.04em; }
+  .contact-info a:hover { color: var(--violet); }
+  .contact-info a span { color: var(--text-dim); font-size: 10px; letter-spacing: 0.12em; display: block; margin-bottom: 2px; }
+
+  .edu-box { padding: 24px; border: 1px solid var(--border); }
+  .edu-school { font-size: 11px; color: var(--text-bright); letter-spacing: 0.08em; margin-bottom: 6px; font-weight: 500; }
+  .edu-degree { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; line-height: 1.5; }
+  .edu-gpa { font-size: 10px; color: var(--violet); letter-spacing: 0.1em; margin-bottom: 16px; }
+  .edu-activities { font-size: 10px; color: var(--text-dim); line-height: 1.7; }
+
+  footer { padding: 24px 40px 24px 60px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-brand { font-size: 11px; letter-spacing: 0.12em; color: var(--text-dim); }
+  .footer-note { font-size: 10px; color: var(--text-dim); letter-spacing: 0.08em; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px 16px 32px; }
+    .nav-links { display: none; }
+    .section-inner { padding: 60px 24px 60px 32px; }
+    .hero { padding: 80px 24px 60px; }
+    .role-item { grid-template-columns: 1fr; gap: 8px; }
+    .role-date { display: none; }
+    .research-grid { grid-template-columns: 1fr; }
+    .bento { grid-template-columns: 1fr; }
+    .bento-card.wide { grid-column: span 1; }
+    .contact-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="side-bar"></div>
+
+<nav>
+  <div class="nav-brand">LOVE ADU <span>&#9632;</span> loveadu@berkeley.edu</div>
+  <ul class="nav-links">
+    <li><a href="#experience">EXPERIENCE</a></li>
+    <li><a href="#research">RESEARCH</a></li>
+    <li><a href="#about">ABOUT</a></li>
+    <li><a href="#contact">CONTACT</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div>
+    <p class="hero-eyebrow">MEDIA LAW &amp; POLICY &nbsp;&middot;&nbsp; DATA SCIENCE &nbsp;&middot;&nbsp; AI GOVERNANCE</p>
+    <h1>Love Adu</h1>
+    <p class="hero-sub">
+      UC Berkeley student, researcher, and policy advocate working at the intersection of
+      <span style="color:#7dd3fc">technology governance</span>,
+      <span style="color:#f0abfc">algorithmic accountability</span>, and
+      <span style="color:#f9a8d4">digital rights</span>.
+      Appointed to California's Board of Governors. AI Policy Fellow.
+    </p>
+    <div class="hero-tags">
+      <div class="tag violet">BOARD OF GOVERNORS &mdash; NEWSOM APPOINTEE</div>
+      <div class="tag pink">AI POLICY FELLOW &mdash; BASI</div>
+      <div class="tag purple">RESPONSIBLE TECH FELLOW &mdash; CA DEPT OF TECHNOLOGY</div>
+      <div class="tag">GPA 3.8</div>
+      <div class="tag">EXPECTED MAY 2027</div>
+    </div>
+    <div class="hero-links">
+      <a href="#experience" class="btn btn-primary">VIEW EXPERIENCE</a>
+      <a href="https://love-adu.github.io/website/" target="_blank" class="btn btn-outline">PORTFOLIO SITE &rarr;</a>
+    </div>
+  </div>
+  <p class="hero-scroll">SCROLL TO EXPLORE &darr;</p>
+</section>
+
+<section id="experience">
+  <div class="section-inner">
+    <p class="section-label">WORK EXPERIENCE</p>
+    <h2 class="section-title">Policy, Research &amp; Advocacy</h2>
+    <p class="section-intro">
+      From statewide education policy to federal tech reform, I work where
+      <span class="highlight">technology intersects with institutional power</span> &mdash;
+      advocating for accountability, transparency, and digital equity.
+    </p>
+
+    <div class="roles-grid">
+
+      <div class="role-item">
+        <div class="role-org">NEWSOM APPOINTEE</div>
+        <div class="role-content">
+          <div class="role-title">Board of Governors Member &mdash; California Community Colleges</div>
+          <div class="role-desc">Appointed by Governor Gavin Newsom to lead statewide education policy for 2.2M students across 118 public colleges. Sole student voice on AI Committee. Implementing the first student AI fellows program for the CCC system. Shaping reforms on student data privacy, broadband access, and digital resource equity.</div>
+          <div>
+            <span class="role-badge badge-current">CURRENT</span>
+            <span class="role-badge badge-policy">APPOINTED</span>
+          </div>
+        </div>
+        <div class="role-date">DEC 2024 &ndash; PRESENT</div>
+      </div>
+
+      <div class="role-item">
+        <div class="role-org">CA DEPT OF TECHNOLOGY</div>
+        <div class="role-content">
+          <div class="role-title">Responsible Technology Fellow</div>
+          <div class="role-desc">Advising the California Department of Technology on responsible technology design and public-sector digital governance. Leading actionable policy recommendations on state technology implementation and accountability practices.</div>
+          <span class="role-badge badge-current">CURRENT</span>
+        </div>
+        <div class="role-date">DEC 2025 &ndash; PRESENT</div>
+      </div>
+
+      <div class="role-item">
+        <div class="role-org">ISSUE ONE</div>
+        <div class="role-content">
+          <div class="role-title">Policy Intern, Technology Reform</div>
+          <div class="role-desc">Conducting research on disinformation, social media governance, data privacy, kids' online safety, and national security. Drafting policy memos, talking points, and legislative monitoring briefs to support bipartisan advocacy and public-facing tech reform.</div>
+          <span class="role-badge badge-current">CURRENT</span>
+        </div>
+        <div class="role-date">DEC 2025 &ndash; PRESENT</div>
+      </div>
+
+      <div class="role-item">
+        <div class="role-org">GROUNDWORK COLLABORATIVE</div>
+        <div class="role-content">
+          <div class="role-title">Policy Communications Intern</div>
+          <div class="role-desc">Selected as 1 of 15 Roosevelt Network Fellows from 600+ applicants. Supported policy research and narrative strategy on economic justice through federal economic legislation analysis and narrative trend research.</div>
+          <span class="role-badge badge-policy">ROOSEVELT FELLOW</span>
+        </div>
+        <div class="role-date">JUNE &ndash; JULY 2025</div>
+      </div>
+
+      <div class="role-item">
+        <div class="role-org">COMMON CAUSE</div>
+        <div class="role-content">
+          <div class="role-title">Disinformation Captain</div>
+          <div class="role-desc">Monitored and investigated 900+ election disinformation reports. Trained 1,500+ national volunteers to detect political misinformation. Lobbied for AI transparency in political advertising (AB 2655) and federal digital rights reform.</div>
+        </div>
+        <div class="role-date">AUG 2023 &ndash; AUG 2025</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="research">
+  <div class="section-inner">
+    <p class="section-label">RESEARCH EXPERIENCE</p>
+    <h2 class="section-title">Original Inquiry</h2>
+    <p class="section-intro">
+      Computational and qualitative research spanning algorithmic bias, online radicalization, disinformation networks, and
+      <span class="highlight">the political economy of platform governance.</span>
+    </p>
+  </div>
+
+  <div class="research-grid">
+
+    <div class="research-card rc-1">
+      <div class="research-venue">UC BERKELEY &nbsp;&middot;&nbsp; HAAS SCHOOL OF BUSINESS</div>
+      <div class="research-title">Undergraduate Research Apprentice &mdash; AI Ethics &amp; Social Media Policy</div>
+      <div class="research-desc">Analyzed policy, regulatory, and corporate dimensions of AI and social media governance, focusing on algorithmic bias, moderation policy, and accountability mechanisms influencing platform operations.</div>
+    </div>
+
+    <div class="research-card rc-2">
+      <div class="research-venue">UC BERKELEY CITRIS TECH POLICY SYMPOSIUM</div>
+      <div class="research-title">&ldquo;The Artifice of Algorithmic Autonomy&rdquo;</div>
+      <div class="research-desc">Analyzed media and corporate discourse across ~957,000 articles (2008&ndash;2025) using computational text analysis to examine how linguistic framing diffuses institutional responsibility in technology governance.</div>
+    </div>
+
+    <div class="research-card rc-3">
+      <div class="research-venue">OXFORD INTERNET INSTITUTE &nbsp;&middot;&nbsp; PENNSYLVANIA STATE UNIVERSITY</div>
+      <div class="research-title">&ldquo;Investigating Manosphere Community Structures Using Social Network Analysis&rdquo;</div>
+      <div class="research-desc">Longitudinal social network analysis of Manosphere communities using Python, applying centrality metrics and community detection to examine online radicalization and user migration over time.</div>
+    </div>
+
+    <div class="research-card rc-4">
+      <div class="research-venue">OUTVOTE HQ &mdash; RESEARCH FELLOW</div>
+      <div class="research-title">&ldquo;Algorithmic Curation and Its Effects on LGBTQ Youth Civic Engagement&rdquo;</div>
+      <div class="research-desc">Funded national research on how social media algorithms shape queer voter outreach, engagement, and political discourse &mdash; with emphasis on algorithmic amplification, polarization, and echo chambers.</div>
+    </div>
+
+    <div class="research-card rc-5">
+      <div class="research-venue">UC BERKELEY &mdash; LI LAB, SOCIOLOGY</div>
+      <div class="research-title">&ldquo;From Trust to Turmoil: How Vaccines Became Contested&rdquo;</div>
+      <div class="research-desc">Analyzed the politicization of vaccine communication and misinformation networks using survey design, discourse analysis, and digital ethnography to assess shifting patterns of public trust.</div>
+    </div>
+
+    <div class="research-card rc-6">
+      <div class="research-venue">NCUR &mdash; NATIONAL CONFERENCE, APRIL 2025</div>
+      <div class="research-title">&ldquo;Deception Divide: The Role of Political Disinformation in Marginalized Voter Outcomes&rdquo;</div>
+      <div class="research-desc">Presented original research analyzing how digital disinformation undermines civic engagement and voter trust through geospatial and social media analysis.</div>
+    </div>
+
+  </div>
+</section>
+
+<section id="about">
+  <div class="section-inner">
+    <p class="section-label">ABOUT &amp; SKILLS</p>
+    <h2 class="section-title">Background</h2>
+  </div>
+
+  <div class="bento">
+
+    <div class="bento-card wide">
+      <div class="bento-label">IN MY OWN WORDS</div>
+      <div class="bento-text">
+        I&rsquo;m a <span class="highlight">Media Law &amp; Policy and Data Science student at UC Berkeley</span> passionate about ensuring technology serves democratic values rather than undermining them. My work sits at the intersection of computational research, civic advocacy, and public policy &mdash; from analyzing 957,000 news articles to testifying on AI legislation.
+        <br><br>
+        I believe the most important question in technology governance isn&rsquo;t what algorithms can do, but <span class="highlight">who is accountable when they cause harm.</span>
+      </div>
+    </div>
+
+    <div class="bento-card">
+      <div class="bento-label">EDUCATION</div>
+      <div class="bento-stat-num">3.8</div>
+      <div class="bento-stat-label">GPA at UC Berkeley<br>Expected May 2027</div>
+    </div>
+
+    <div class="bento-card">
+      <div class="bento-label">STUDENTS REPRESENTED</div>
+      <div class="bento-stat-num">2.2M</div>
+      <div class="bento-stat-label">Students across 118 CA Community Colleges</div>
+    </div>
+
+    <div class="bento-card">
+      <div class="bento-label">VOLUNTEERS TRAINED</div>
+      <div class="bento-stat-num">1500+</div>
+      <div class="bento-stat-label">National disinformation detection corps</div>
+    </div>
+
+    <div class="bento-card wide">
+      <div class="bento-label">SKILLS &amp; METHODS</div>
+      <div class="skills-list">
+        <span class="skill-tag">PYTHON</span>
+        <span class="skill-tag">SOCIAL NETWORK ANALYSIS</span>
+        <span class="skill-tag">COMPUTATIONAL TEXT ANALYSIS</span>
+        <span class="skill-tag">SURVEY DESIGN</span>
+        <span class="skill-tag">GEOSPATIAL ANALYSIS</span>
+        <span class="skill-tag">POLICY MEMO WRITING</span>
+        <span class="skill-tag">LEGISLATIVE MONITORING</span>
+        <span class="skill-tag">DIGITAL ETHNOGRAPHY</span>
+        <span class="skill-tag">DISCOURSE ANALYSIS</span>
+        <span class="skill-tag">DATA SCIENCE</span>
+        <span class="skill-tag">CENTRALITY METRICS</span>
+        <span class="skill-tag">COMMUNITY DETECTION</span>
+      </div>
+    </div>
+
+    <div class="bento-card">
+      <div class="bento-label">LEADERSHIP</div>
+      <div class="bento-text" style="font-size:11px; line-height:1.9; color: var(--text-dim);">
+        AI Policy Fellow &mdash; BASI<br>
+        Chancellor&rsquo;s Advisory Committee (LGBTQ+)<br>
+        Harvard PPLC &rsquo;24<br>
+        Political Computer Science VP<br>
+        AFFIRM Clinic Founder &amp; Director
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="contact">
+  <div class="section-inner">
+    <p class="section-label">GET IN TOUCH</p>
+    <h2 class="section-title">Contact</h2>
+
+    <div class="contact-grid">
+
+      <div class="contact-info">
+        <a href="mailto:loveadu@berkeley.edu">
+          <span>EMAIL</span>
+          loveadu@berkeley.edu
+        </a>
+        <a href="tel:7147705499">
+          <span>PHONE</span>
+          (714) 770-5499
+        </a>
+        <a href="https://love-adu.github.io/website/" target="_blank">
+          <span>WEBSITE</span>
+          love-adu.github.io/website/
+        </a>
+        <a href="https://linkedin.com" target="_blank">
+          <span>LINKEDIN</span>
+          LinkedIn Profile &rarr;
+        </a>
+      </div>
+
+      <div>
+        <div class="edu-box">
+          <div class="edu-school">UNIVERSITY OF CALIFORNIA, BERKELEY</div>
+          <div class="edu-degree">Bachelor&rsquo;s &mdash; Media Law &amp; Policy<br>and Data Science</div>
+          <div class="edu-gpa">GPA: 3.8 &nbsp;&middot;&nbsp; Expected May 2027</div>
+          <div class="edu-activities">
+            AI Policy Fellow &nbsp;&middot;&nbsp; Berkeley AI Safety Initiative<br>
+            Chancellor&rsquo;s Advisory Committee &mdash; LGBTQ+ Communities<br>
+            Harvard PPLC &rsquo;24 &nbsp;&middot;&nbsp; Political Computer Science VP<br>
+            AFFIRM Clinic Founder &amp; Director
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">LOVE ADU <span style="color:var(--border);margin:0 8px">&#9632;</span> BERKELEY, CA</div>
+  <div class="footer-note">MEDIA LAW &amp; POLICY &nbsp;&middot;&nbsp; DATA SCIENCE &nbsp;&middot;&nbsp; AI GOVERNANCE</div>
+</footer>
+
+</body>
+</html>
